@@ -1,8 +1,7 @@
 import React from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, TwitterAuthProvider, FacebookAuthProvider, signInWithPopup, signOut, FirebaseAuth } from "firebase/auth"; // may have to change to node_modules/firebase
-import "../node_modules/font-awesome/css/font-awesome.min.css";
-
+import {getFirestore, collection, addDoc} from "firebase/firestore";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBQuRJ9w1eaRVpeXGGemAxEYavIOf5mziY",
@@ -13,7 +12,6 @@ const firebaseConfig = {
     appId: "1:646847032712:web:41d52172961ed678549e3d",
     measurementId: "G-ZCRBSPX0PP"
 };
-
 var userGooglelogin = false;
 var userTwitterlogin = false;
 var userFacebooklogin = false;
@@ -32,6 +30,14 @@ if (typeof document !== "undefined"){
     }
    
 }
+async function addNewDocument(db, user){
+    console.log("addnew doc func called");
+    const newDoc = await addDoc(collection(db, 'scoreboard'), {
+        UserName: user.displayName,
+        UserScore: total
+    })
+    console.log("new doc added to db");
+}
 
 function GoogleFireBaseLogin(){
 
@@ -43,6 +49,7 @@ function GoogleFireBaseLogin(){
     const app = initializeApp(firebaseConfig);
     const provider = new GoogleAuthProvider(app);
     const auth = getAuth(app);
+    const db = getFirestore();
 
     signInWithPopup(auth, provider)
         .then((result) => {
@@ -51,10 +58,11 @@ function GoogleFireBaseLogin(){
             const token = credential.accessToken;
             // The signed-in user info.
             const user = result.user;
-            alert(user.displayName);     
+            alert(user.displayName);
+            console.log("checking if this works"); 
+            addNewDocument(db, user);    
             });
     userGooglelogin = true;
-    
 }
 
 function GoogleSignOut(){
@@ -88,6 +96,7 @@ function TwitterFireBaseLogin(){
   
       // The signed-in user info.
       const user = result.user;
+      addNewDocument(db, user);    
       // ...
     });
 
@@ -123,6 +132,7 @@ function FacebookFireBaseLogin(){
   
       // The signed-in user info.
       const user = result.user;
+      addNewDocument(db, user);    
       // ...
     });
 }
@@ -177,5 +187,4 @@ export default function AuthenticationLogin(props) {
       </div>
     );
 }
-
 

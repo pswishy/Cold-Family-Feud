@@ -13,7 +13,6 @@ export default function Login(props) {
         <LanguageSwitcher />
       </div>
       <div class = "self-end">
-        <AuthenticationLogin />
       </div>
       <TitleLogo insert="" />
       <div  class="flex flex-col">
